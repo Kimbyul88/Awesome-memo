@@ -1,9 +1,29 @@
+function displayMemo(memo) {
+  const ul = document.querySelector("#memo-ul"); // ul
+  const li = document.createElement("li"); //li 를 만든다.
+  li.innerText = `[id:${memo.id}] ${memo.content}`; // li안을 생성.
+
+  const editBtn = document.createElement("button");
+  editBtn.innerText = "수정하기";
+  editBtn.addEventListener("click", editMemo);
+  editBtn.dataset.id = memo.id;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.innerText = "삭제";
+  deleteBtn.addEventListener("click", deleteMemo);
+  deleteBtn.dataset.id = memo.id;
+
+  li.appendChild(editBtn);
+  li.appendChild(deleteBtn);
+  console.log("why?");
+  ul.appendChild(li); //ul에 li를 하나하나씩 추가. (html에 추가하였으므로 페이지에 디스플레이됨!)
+}
+
 async function editMemo(event) {
   const id = event.target.dataset.id;
   const editInput = prompt("수정할 값을 입력하세요");
-  const res = await fetch("/memos/{id}", {
-    method: "PUT", //Create단계, 즉 등록을 해야하기 때문에 겟이 아니라 포스트를 사용.
-    //서버에 데이터를 포스트한다.
+  const res = await fetch(`/memos/${id}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
@@ -16,16 +36,13 @@ async function editMemo(event) {
   readMemo(); //제대로 없데이트 됐는지 확인..
 }
 
-function displayMemo(memo) {
-  const ul = document.querySelector("#memo-ul"); // ul
-  const li = document.createElement("li"); //li 를 만든다.
-  const editBtn = document.createElement("button");
-  li.innerText = `[id:${memo.id}] ${memo.content}`; // li안을 생성.
-  editBtn.innerText = "수정하기";
-  editBtn.addEventListener("click", editMemo);
-  editBtn.dataset.id = memo.id;
-  li.appendChild(editBtn);
-  ul.appendChild(li); //ul에 li를 하나하나씩 추가. (html에 추가하였으므로 페이지에 디스플레이됨!)
+async function deleteMemo(event) {
+  const idd = event.target.dataset.id;
+  const res = await fetch(`/memos/${idd}`, {
+    method: "DELETE",
+  }); //body로 추가적인 정보전달은 안함.
+  console.log(idd);
+  readMemo(); //제대로 없데이트 됐는지 확인..
 }
 
 async function readMemo() {
